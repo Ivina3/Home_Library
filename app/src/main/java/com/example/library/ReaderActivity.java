@@ -15,6 +15,7 @@ public class ReaderActivity extends AppCompatActivity {
     private static final String TAG = "ReaderActivity";
 
     private ImageView imageView;
+    private TextView titleTextView;
     private TextView authorTextView;
     private TextView yearTextView;
     private TextView descriptionTextView;
@@ -26,23 +27,27 @@ public class ReaderActivity extends AppCompatActivity {
         setContentView(R.layout.activity_reader);
 
         imageView = findViewById(R.id.readerImageView);
+        titleTextView = findViewById(R.id.readerTitleTextView);
         authorTextView = findViewById(R.id.readerAuthorTextView);
         yearTextView = findViewById(R.id.readerYearTextView);
         descriptionTextView = findViewById(R.id.readerDescriptionTextView);
         readButton = findViewById(R.id.readButton);
 
         // Получаем данные из Intent
+        String title = getIntent().getStringExtra("title");
         String author = getIntent().getStringExtra("author");
         String year = getIntent().getStringExtra("year");
         String imageUrl = getIntent().getStringExtra("imageUrl");
         String description = getIntent().getStringExtra("description");
 
-        if (author != null && year != null && imageUrl != null && description != null) {
+        if (title != null && author != null && year != null && imageUrl != null && description != null) {
+            Log.d(TAG, "Title: " + title);
             Log.d(TAG, "Author: " + author);
             Log.d(TAG, "Year: " + year);
             Log.d(TAG, "ImageUrl: " + imageUrl);
             Log.d(TAG, "Description: " + description);
 
+            titleTextView.setText(title);
             authorTextView.setText(author);
             yearTextView.setText(year);
             descriptionTextView.setText(description);
