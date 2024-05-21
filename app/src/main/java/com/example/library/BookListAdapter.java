@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 public class BookListAdapter extends ArrayAdapter<Book> {
@@ -27,15 +29,16 @@ public class BookListAdapter extends ArrayAdapter<Book> {
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        // Получение данных
-        String author = getItem(position).getAuthor();
-        String year = getItem(position).getYear();
-        int image = getItem(position).getImage();
+        Book currentBook = getItem(position);
+        if (currentBook == null) return convertView;
 
-        // Создание объекта ViewHolder
+        String author = currentBook.getAuthor();
+        String year = currentBook.getYear();
+        String imageUrl = currentBook.getImageUrl();
+        String description = currentBook.getDescription();
+
         ViewHolder viewHolder;
 
-        // Проверка возможности использовать существующий объект View
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(mContext);
             convertView = inflater.inflate(mResource, parent, false);
@@ -50,40 +53,27 @@ public class BookListAdapter extends ArrayAdapter<Book> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        // Заполнение данных в объект ViewHolder
         viewHolder.authorTextView.setText(author);
         viewHolder.yearTextView.setText(year);
-        viewHolder.imageView.setImageResource(image);
 
+        Glide.with(mContext)
+                .load(imageUrl)
+                .into(viewHolder.imageView);
 
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                // String userRole = getUserRole(); // Здесь нужно получить роль пользователя, например, из базы данных или переменной
-                String userRole = "kolya";
-
-                // Переход на другую активность в зависимости от роли пользователя
-                if (userRole.equals("admin")) {
-
-
-
-                    Intent intent = new Intent(mContext, AdminActivity.class);
-                    mContext.startActivity(intent);
-                } else {
-                    // Переход на активность для читателя
-                    Intent intent = new Intent(mContext, ReaderActivity.class);
-                    mContext.startActivity(intent);
-                }
+                Intent intent = new Intent(mContext, ReaderActivity.class);
+                intent.putExtra("author", author);
+                intent.putExtra("year", year);
+                intent.putExtra("imageUrl", imageUrl);
+                intent.putExtra("description", description);
+                mContext.startActivity(intent);
             }
         });
 
         return convertView;
     }
-
-
-
-
 
     private static class ViewHolder {
         TextView authorTextView;

@@ -1,13 +1,20 @@
 package com.example.library;
+
 public class Book {
     private String author;
     private String year;
-    private int image;
+    private String imageUrl;
+    private String description;
 
-    public Book(String author, String year, int image) {
+    public Book() {
+        // Обязательный конструктор для использования Firebase
+    }
+
+    public Book(String author, String year, String imageUrl, String description) {
         this.author = author;
         this.year = year;
-        this.image = image;
+        this.imageUrl = imageUrl;
+        this.description = description;
     }
 
     public String getAuthor() {
@@ -18,7 +25,11 @@ public class Book {
         return year;
     }
 
-    public int getImage() {
-        return image;
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

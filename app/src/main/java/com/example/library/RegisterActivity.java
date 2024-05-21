@@ -62,7 +62,7 @@ public class RegisterActivity extends AppCompatActivity {
 
 //                                    Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
 
-                                    startActivity(new Intent(RegisterActivity.this, BookMenuActivity.class));
+                                    startActivity(new Intent(RegisterActivity.this, MainActivity.class));
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {

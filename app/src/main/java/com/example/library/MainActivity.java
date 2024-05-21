@@ -13,21 +13,25 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 public class MainActivity extends AppCompatActivity {
-EditText email;
-EditText password;
-Button b1;
+    EditText email;
+    EditText password;
+    Button b1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FirebaseApp.initializeApp(this);
         setContentView(R.layout.activity_main);
 
-        email=findViewById(R.id.editTextTextEmailAddress);
-        password=findViewById(R.id.editTextTextPassword);
-        b1=findViewById(R.id.button);
+        email = findViewById(R.id.editTextTextEmailAddress);
+        password = findViewById(R.id.editTextTextPassword);
+        b1 = findViewById(R.id.button);
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -36,7 +40,6 @@ Button b1;
                 if (!userEmail.isEmpty() && !userPassword.isEmpty()) {
 
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
-
 
                     db.collection("user")
                             .whereEqualTo("email", userEmail)
@@ -48,15 +51,19 @@ Button b1;
                                     if (task.isSuccessful()) {
                                         QuerySnapshot queryDocumentSnapshots = task.getResult();
                                         if (!queryDocumentSnapshots.isEmpty()) {
+                                            DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
+                                            String userRole = document.getString("role");
 
-                                            startActivity(new Intent(MainActivity.this, BookMenuActivity.class));
+                                            // Navigate based on user role
+                                            if ("admin".equals(userRole)) {
+                                                startActivity(new Intent(MainActivity.this, BookMenuActivity.class));
+                                            } else {
+                                                startActivity(new Intent(MainActivity.this, BookMenuActivity.class));
+                                            }
                                         } else {
-
                                             Toast.makeText(MainActivity.this, "Неверный email или пароль", Toast.LENGTH_SHORT).show();
                                         }
                                     } else {
-//                                        // Ошибка при выполнении запроса к базе данных
-//                                        Log.d(TAG, "Error getting documents: ", task.getException());
                                         Toast.makeText(MainActivity.this, "Что-то пошло не так", Toast.LENGTH_SHORT).show();
                                     }
                                 }
@@ -64,15 +71,15 @@ Button b1;
                 } else {
                     Toast.makeText(MainActivity.this, "Пожалуйста, заполните все поля", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
     }
-    public void onRegister(View view){
+
+    public void onRegister(View view) {
         startActivity(new Intent(this, RegisterActivity.class));
     }
-    public void onLogin1(View view){
-//        startActivity(new Intent(this, BookMenuActivity.class));
-    }
 
+    public void onLogin1(View view) {
+        // Placeholder for future use
+    }
 }
