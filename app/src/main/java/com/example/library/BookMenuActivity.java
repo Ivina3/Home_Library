@@ -182,7 +182,7 @@ public class BookMenuActivity extends AppCompatActivity {
                                 showDeleteBookDialog();
                                 break;
                             case 1: // Добавить книгу
-                                // startActivity(new Intent(BookMenuActivity.this, AddBookActivity.class));
+                                startActivity(new Intent(BookMenuActivity.this, AddBookActivity.class));
                                 break;
                             case 2: // Отмена
                                 dialog.dismiss();
