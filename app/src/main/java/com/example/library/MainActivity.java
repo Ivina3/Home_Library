@@ -23,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
     EditText password;
     Button b1;
 
+    private static final String TAG = "MainActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,13 +54,19 @@ public class MainActivity extends AppCompatActivity {
                                         QuerySnapshot queryDocumentSnapshots = task.getResult();
                                         if (!queryDocumentSnapshots.isEmpty()) {
                                             DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
-                                            String userRole = document.getString("role");
+                                            String role = document.getString("role");
 
-                                            // Navigate based on user role
-                                            if ("admin".equals(userRole)) {
-                                                startActivity(new Intent(MainActivity.this, BookMenuActivity.class));
+                                            if (role != null) {
+                                                boolean isAdmin = role.equals("admin");
+                                                Log.d(TAG, "isAdmin: " + isAdmin);
+
+                                                // Передаем роль пользователя в BookMenuActivity
+                                                Intent intent = new Intent(MainActivity.this, BookMenuActivity.class);
+                                                intent.putExtra("isAdmin", isAdmin);
+                                                startActivity(intent);
                                             } else {
-                                                startActivity(new Intent(MainActivity.this, BookMenuActivity.class));
+                                                Log.e(TAG, "role field is missing");
+                                                Toast.makeText(MainActivity.this, "Ошибка данных пользователя", Toast.LENGTH_SHORT).show();
                                             }
                                         } else {
                                             Toast.makeText(MainActivity.this, "Неверный email или пароль", Toast.LENGTH_SHORT).show();

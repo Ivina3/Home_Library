@@ -1,11 +1,13 @@
 package com.example.library;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -39,6 +42,7 @@ public class BookMenuActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private EditText searchEditText;
     private Button searchButton;
+    private ImageButton settingsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +51,8 @@ public class BookMenuActivity extends AppCompatActivity {
 
         // Получаем данные из Intent
         Intent intent = getIntent();
-        String userId = intent.getStringExtra("user_id");
         isAdmin = intent.getBooleanExtra("isAdmin", false);
+        Log.d(TAG, "isAdmin: " + isAdmin);
 
         // Показать приветственное сообщение
         showWelcomeMessage(isAdmin);
@@ -62,6 +66,19 @@ public class BookMenuActivity extends AppCompatActivity {
 
         searchEditText = findViewById(R.id.searchEditText);
         searchButton = findViewById(R.id.searchButton);
+        settingsButton = findViewById(R.id.settingsButton);
+
+        if (isAdmin) {
+            settingsButton.setVisibility(View.VISIBLE);
+            settingsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showSettingsDialog();
+                }
+            });
+        } else {
+            settingsButton.setVisibility(View.GONE);
+        }
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,5 +169,75 @@ public class BookMenuActivity extends AppCompatActivity {
 
         // Закрываем навигационное меню
         drawerLayout.closeDrawers();
+    }
+
+    private void showSettingsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Настройки")
+                .setItems(new String[]{"Удалить книгу", "Добавить книгу", "Отмена"}, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0: // Удалить книгу
+                                showDeleteBookDialog();
+                                break;
+                            case 1: // Добавить книгу
+                                // startActivity(new Intent(BookMenuActivity.this, AddBookActivity.class));
+                                break;
+                            case 2: // Отмена
+                                dialog.dismiss();
+                                break;
+                        }
+                    }
+                })
+                .create()
+                .show();
+    }
+
+    private void showDeleteBookDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Удалить книгу");
+
+        final EditText input = new EditText(this);
+        input.setHint("Название книги");
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String bookTitle = input.getText().toString().trim();
+                deleteBookFromFirestore(bookTitle);
+                dialog.dismiss();
+            }
+        });
+
+        builder.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.create().show();
+    }
+
+    private void deleteBookFromFirestore(String bookTitle) {
+        db.collection("book")
+                .whereEqualTo("title", bookTitle)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                document.getReference().delete();
+                            }
+                            Toast.makeText(BookMenuActivity.this, "Книга удалена", Toast.LENGTH_SHORT).show();
+                            fetchBooksFromFirestore(null); // Обновить список книг
+                        } else {
+                            Toast.makeText(BookMenuActivity.this, "Книга не найдена", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }
