@@ -37,6 +37,8 @@ public class BookListAdapter extends ArrayAdapter<Book> {
         String author = currentBook.getAuthor();
         String year = currentBook.getYear();
         String imageUrl = currentBook.getImageUrl();
+        String description = currentBook.getDescription();
+        String bookTextUrl = currentBook.getBookTextUrl();
 
         // Создание объекта ViewHolder
         ViewHolder viewHolder;
@@ -71,7 +73,8 @@ public class BookListAdapter extends ArrayAdapter<Book> {
                 intent.putExtra("author", author);
                 intent.putExtra("year", year);
                 intent.putExtra("imageUrl", imageUrl);
-                intent.putExtra("description", currentBook.getDescription());
+                intent.putExtra("description", description);
+                intent.putExtra("bookTextUrl", bookTextUrl);
                 mContext.startActivity(intent);
             }
         });

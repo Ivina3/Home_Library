@@ -81,7 +81,7 @@ public class AddBookActivity extends AppCompatActivity {
 
     private void chooseFile() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("application/*"); // Можно выбрать любой тип файла, если необходимо
+        intent.setType("text/plain"); // Для выбора текстовых файлов
         startActivityForResult(Intent.createChooser(intent, "Выберите файл"), PICK_FILE_REQUEST);
     }
 
@@ -139,7 +139,7 @@ public class AddBookActivity extends AppCompatActivity {
                             });
                         }
                     })
-                    .addOnFailureListener(new OnFailureListener() {  // Исправлено
+                    .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
                             Toast.makeText(AddBookActivity.this, "Ошибка загрузки файла", Toast.LENGTH_SHORT).show();
