@@ -100,9 +100,6 @@ public class RegisterActivity extends AppCompatActivity {
 //        usersRef.child(userId).setValue(user);
 //    }
 
-    public void onLogin(View view){
 
-
-    }
 
 }

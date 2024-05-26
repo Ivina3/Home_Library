@@ -141,33 +141,22 @@ public class BookMenuActivity extends AppCompatActivity {
     }
 
     private void selectDrawerItem(MenuItem item) {
-        Fragment fragment = null;
-        Class fragmentClass = null;
+        Intent intent = new Intent(this, DetailsActivity.class);
 
         String title = item.getTitle().toString();
         Log.d(TAG, "Selected item title: " + title);
 
         if (title.equals("Инструкции")) {
-            fragmentClass = InstructionsFragment.class;
+            intent.putExtra(DetailsActivity.EXTRA_FRAGMENT_TYPE, "instructions");
         } else if (title.equals("Об авторе")) {
-            fragmentClass = AboutAuthorFragment.class;
+            intent.putExtra(DetailsActivity.EXTRA_FRAGMENT_TYPE, "about_author");
         } else if (title.equals("О приложении")) {
-            fragmentClass = AboutAppFragment.class;
-        } else {
-            fragmentClass = InstructionsFragment.class;
+            intent.putExtra(DetailsActivity.EXTRA_FRAGMENT_TYPE, "about_app");
         }
 
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        startActivity(intent);
 
-        // Вставляем фрагмент, заменяя текущий
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit();
 
-        // Закрываем навигационное меню
         drawerLayout.closeDrawers();
     }
 
